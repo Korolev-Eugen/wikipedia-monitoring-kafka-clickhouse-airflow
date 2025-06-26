@@ -132,8 +132,8 @@ services:
 
 
   producer:
-    build: ./producer
-    env_file: .env
+    build: producer
+    env_file: ../.env
     deploy:
       resources:
         limits:
@@ -166,7 +166,7 @@ services:
       - minio
     container_name: mc
     env_file:
-      - .env
+      - ../.env
     entrypoint: >
       /bin/sh -c "
       /tmp/wait-for-it.sh minio:9000 &&

@@ -4,17 +4,19 @@ airflow-webserver.pid
 *.pid
 
 # Kafka
-kafka-logs/
-zookeeper-data/
+src/kafka-logs/
+srczookeeper-data/
+src/logs
 
 # ClickHouse
-clickhouse/data/
-clickhouse/logs/
+src/clickhouse/data/
+src/clickhouse/logs/
 
 # Python
 venv/
 *.egg-info/
 dist/
+src/dags/__pycache__/
 
 # Environment files
 .env
