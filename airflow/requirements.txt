@@ -1,0 +1,9 @@
+requests
+kafka-python==2.0.2
+confluent-kafka==2.3.0
+clickhouse-driver==0.2.7
+python-dotenv==1.0.0
+tqdm
+tqdm-joblib
+
+

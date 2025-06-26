@@ -1,0 +1,5 @@
+python-dotenv
+faker>=18.11.1
+jsonschema
+confluent_kafka>=2.3.0
+requests

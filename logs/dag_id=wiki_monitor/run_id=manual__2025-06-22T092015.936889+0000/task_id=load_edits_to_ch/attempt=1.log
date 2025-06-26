@@ -1,0 +1,13 @@
+{"timestamp":"2025-06-22T09:20:17.269076","level":"info","event":"DAG bundles loaded: dags-folder","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager"}
+{"timestamp":"2025-06-22T09:20:17.269487","level":"info","event":"Filling up the DagBag from /opt/airflow/dags/wiki_monitoring.py","logger":"airflow.models.dagbag.DagBag"}
+{"timestamp":"2025-06-22T09:20:17.398594","level":"info","event":"Topic wiki_edits already exists","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:17.398710","level":"info","event":"---------------topic metadata created------------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:18.399568","level":"info","event":"----------------Processing messages: None------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:19.400019","level":"info","event":"----------------Processing messages: None------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:20.400511","level":"info","event":"----------------Processing messages: None------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:21.400799","level":"info","event":"----------------Processing messages: None------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:22.401075","level":"info","event":"----------------Processing messages: None------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:22.604174","level":"info","event":"----------------Processing messages: <cimpl.Message object at 0x73bdeee5a440>------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:22.604388","level":"info","event":"-----------edit: {'title': 'Category:Files from Gallica', 'user': 'Gzen92Bot', 'is_bot': True, 'server_name': 'commons.wikimedia.org', 'timestamp': 1750583859}-------------","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:22.604474","level":"error","event":"Error in consumer: 'Logger' object has no attribute 'errror'","logger":"unusual_prefix_05f7c68866a4b9981d661b83f7c582db0b838856_wiki_monitoring"}
+{"timestamp":"2025-06-22T09:20:22.615937","level":"info","event":"Done. Returned value was: None","logger":"airflow.task.operators.airflow.providers.standard.operators.python.PythonOperator"}

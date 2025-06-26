@@ -1,0 +1,21 @@
+# Airflow
+airflow.cfg
+airflow-webserver.pid
+*.pid
+
+# Kafka
+kafka-logs/
+zookeeper-data/
+
+# ClickHouse
+clickhouse/data/
+clickhouse/logs/
+
+# Python
+venv/
+*.egg-info/
+dist/
+
+# Environment files
+.env
+*.secret

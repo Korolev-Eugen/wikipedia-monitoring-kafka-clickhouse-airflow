@@ -1,0 +1,204 @@
+x-airflow-common: &airflow-common
+  environment:
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__CORE__TEST_CONNECTION: 'Enabled'
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: '60'
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'false'
+    AIRFLOW__CORE__FERNET_KEY: 'hCRoPUYBO27QiEg1MRu5hSjLG7yNd8y8XKlm-8kRlkQ='
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: 'true'
+
+services:
+  airflow-apiserver:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+
+
+
+  airflow-scheduler:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+
+
+
+  airflow-worker:
+    <<: *airflow-common
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - docker-network
+
+
+  airflow-dag-processor:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+  airflow-triggerer:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+
+
+  airflow-init:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+
+
+  airflow-cli:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+
+  flower:
+    <<: *airflow-common
+    networks:
+      - docker-network
+
+  redis:
+    networks:
+      - docker-network
+
+
+  postgres:
+    networks:
+      - docker-network
+
+  airflow-python-build:
+    image: airflow-training:latest
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        if [[ -z "${AIRFLOW_UID}" ]]; then
+          echo
+          echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
+          echo "If you are on Linux, you SHOULD follow the instructions below to set "
+          echo "AIRFLOW_UID environment variable, otherwise files will be owned by root."
+          echo "For other operating systems you can get rid of the warning with manually created .env file:"
+          echo "    See: https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#setting-the-right-airflow-user"
+          echo
+        fi
+        exec /entrypoint airflow version
+    user: "0:0"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 200
+    networks:
+      - docker-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_CREATE_TOPICS: "transactions:1:1"
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "kafka:9092", "--list"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - docker-network
+
+
+
+  producer:
+    build: ./producer
+    env_file: .env
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '8G'
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - docker-network
+
+  clickhouse:
+    image: clickhouse/clickhouse-server
+    ports:
+      - "8123:8123"  # HTTP-интерфейс
+      - "9000:9000"  # Native protocol
+    environment:
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - docker-network
+
+
+  mc:
+    image: minio/mc
+    platform: linux/amd64
+    depends_on:
+      - minio
+    container_name: mc
+    env_file:
+      - .env
+    entrypoint: >
+      /bin/sh -c "
+      /tmp/wait-for-it.sh minio:9000 &&
+      /usr/bin/mc alias set minio http://minio:9000 ${MINIO_USERNAME} ${MINIO_PASSWORD} &&
+      /usr/bin/mc mb minio/mlflow;
+      exit 0;
+      "
+    volumes:
+      - ./wait-for-it.sh:/tmp/wait-for-it.sh
+    networks:
+      - docker-network
+
+  minio:
+    restart: always
+    image: minio/minio
+    platform: linux/amd64
+    container_name: mlflow_s3
+    ports:
+      - "9001:9000"
+      - "9002:9001"
+    command: server /data --console-address ':9001' --address ':9000'
+    environment:
+      - MINIO_ROOT_USER=${MINIO_USERNAME}
+      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+    volumes:
+      - minio_data:/data
+    networks:
+      - docker-network
+
+networks:
+  docker-network:
+    driver: bridge
+
+volumes:
+  clickhouse_data:
