@@ -19,5 +19,9 @@ dist/
 src/dags/__pycache__/
 
 # Environment files
-.env
+src/.env
 *.secret
+
+#Grafana
+src/grafana/data/
+!src/grafana/provisioning/
