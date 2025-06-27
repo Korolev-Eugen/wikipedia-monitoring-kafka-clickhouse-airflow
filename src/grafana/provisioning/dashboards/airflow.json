@@ -1,0 +1,13 @@
+{
+  "title": "Airflow Metrics",
+  "panesl": [
+    {
+      "title": "DAG Runs",
+      "type": "stat",
+      "datasource": "ClickHouse",
+      "targets": [{
+        "sql": "SELECT count() FROM airflow.dug_run WHERE execution_date > now() - INTERVAL 1 HOUR"
+      }]
+    }
+  ]
+}

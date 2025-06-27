@@ -133,7 +133,7 @@ services:
 
   producer:
     build: producer
-    env_file: ../.env
+    env_file: .env
     deploy:
       resources:
         limits:
@@ -158,6 +158,22 @@ services:
     networks:
       - docker-network
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_INSTALL_PLUGINS: vertamedia-clickhouse-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/ect/grafana/provisioning
+    depends_on:
+      - clickhouse
+    networks:
+      docker-network:
+
+
 
   mc:
     image: minio/mc
@@ -166,7 +182,7 @@ services:
       - minio
     container_name: mc
     env_file:
-      - ../.env
+      - .env
     entrypoint: >
       /bin/sh -c "
       /tmp/wait-for-it.sh minio:9000 &&
@@ -202,3 +218,4 @@ networks:
 
 volumes:
   clickhouse_data:
+  grafana_data:
