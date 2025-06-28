@@ -167,7 +167,7 @@ services:
       GF_INSTALL_PLUGINS: vertamedia-clickhouse-datasource
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning:/ect/grafana/provisioning
+      - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - clickhouse
     networks:
