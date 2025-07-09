@@ -45,7 +45,7 @@ Docker Compose 2.12+
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/yourusername/wikipedia-monitoring.git
+git clone https://github.com/Korolev-Eugen/wikipedia-monitoring-kafka-clickhouse-airflow.git
 cd wikipedia-monitoring
 
 # 2. Start services (detached mode)
